@@ -31,3 +31,4 @@ target/
 Thumbs.db
 
 *.properties
+src/main/resources/*.properties
