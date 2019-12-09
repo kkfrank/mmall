@@ -21,11 +21,45 @@
     from mmall_cart
     where id = #{id,jdbcType=INTEGER}
   </select>
+
+  <select id="selectByUserIdAndProductId" resultMap="BaseResultMap" parameterType="map">
+    select
+    <include refid="Base_Column_List"/>
+    from mmall_cart
+    where user_id = #{userId}
+    and product_id = #{productId}
+  </select>
+
+  <select id="selectByUserId" resultMap="BaseResultMap" parameterType="map">
+    select <include refid="Base_Column_List"/>
+    from mmall_cart
+    where user_id = #{userId}
+  </select>
+
+  <select id="selectCheckedCartByUserId" resultMap="BaseResultMap" parameterType="integer">
+    select <include refid="Base_Column_List"/>
+    from mmall_cart
+    where user_id = #{userId}
+    and checked = 1
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from mmall_cart
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id, jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.mmall.pojo.Cart" >
+
+  <delete id="deleteByUserIdAndProductIds" parameterType="map">
+    delete from mmall_cart
+    where user_id = #{userId}
+    <if test="productIds != null">
+      and product_id in
+      <foreach collection="productIds" item="item" index="index" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+  </delete>
+
+  <insert id="insert" parameterType="com.mmall.pojo.Cart" useGeneratedKeys="true" keyProperty="id">
     insert into mmall_cart (id, user_id, product_id, 
       quantity, checked, create_time, 
       update_time)
@@ -33,7 +67,7 @@
       #{quantity,jdbcType=INTEGER}, #{checked,jdbcType=INTEGER}, now(),
       now())
   </insert>
-  <insert id="insertSelective" parameterType="com.mmall.pojo.Cart" >
+  <insert id="insertSelective" parameterType="com.mmall.pojo.Cart" useGeneratedKeys="true" keyProperty="id">
     insert into mmall_cart
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -97,9 +131,6 @@
       <if test="checked != null" >
         checked = #{checked,jdbcType=INTEGER},
       </if>
-      <if test="createTime != null" >
-        create_time = #{createTime,jdbcType=TIMESTAMP},
-      </if>
       <if test="updateTime != null" >
         update_time = now(),
       </if>
@@ -112,7 +143,6 @@
       product_id = #{productId,jdbcType=INTEGER},
       quantity = #{quantity,jdbcType=INTEGER},
       checked = #{checked,jdbcType=INTEGER},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = now()
     where id = #{id,jdbcType=INTEGER}
   </update>

@@ -29,3 +29,5 @@ target/
 #ststem ignore
 .DS_Store
 Thumbs.db
+
+*.properties

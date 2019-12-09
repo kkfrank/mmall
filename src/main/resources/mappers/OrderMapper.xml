@@ -29,11 +29,42 @@
     from mmall_order
     where id = #{id,jdbcType=INTEGER}
   </select>
+
+  <select id="selectByOrderNo" resultMap="BaseResultMap" parameterType="long">
+    select
+    <include refid="Base_Column_List"/>
+    from mmall_order
+    where order_no = #{orderNo}
+  </select>
+
+  <select id="selectByUserIdAndOrderNo" resultMap="BaseResultMap" parameterType="map">
+    select
+    <include refid="Base_Column_List"/>
+    from mmall_order
+    where user_id = #{userId}
+    and order_no = #{orderNo}
+  </select>
+
+  <select id="selectByUserId" resultMap="BaseResultMap" parameterType="integer">
+    select
+    <include refid="Base_Column_List"/>
+    from mmall_order
+    where user_id = #{userId}
+    order by create_time desc
+  </select>
+
+  <select id="selectAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from mmall_order
+    order by create_time desc
+  </select>
+  
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from mmall_order
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.mmall.pojo.Order" >
+  <insert id="insert" parameterType="com.mmall.pojo.Order" useGeneratedKeys="true" keyProperty="id">
     insert into mmall_order (id, order_no, user_id, 
       shipping_id, payment, payment_type, 
       postage, status, payment_time, 
@@ -45,7 +76,7 @@
       #{sendTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, #{closeTime,jdbcType=TIMESTAMP}, 
       now(), now())
   </insert>
-  <insert id="insertSelective" parameterType="com.mmall.pojo.Order" >
+  <insert id="insertSelective" parameterType="com.mmall.pojo.Order" useGeneratedKeys="true" keyProperty="id">
     insert into mmall_order
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -172,15 +203,13 @@
       <if test="closeTime != null" >
         close_time = #{closeTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="createTime != null" >
-        create_time = #{createTime,jdbcType=TIMESTAMP},
-      </if>
       <if test="updateTime != null" >
         update_time = now(),
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
+
   <update id="updateByPrimaryKey" parameterType="com.mmall.pojo.Order" >
     update mmall_order
     set order_no = #{orderNo,jdbcType=BIGINT},
@@ -194,7 +223,6 @@
       send_time = #{sendTime,jdbcType=TIMESTAMP},
       end_time = #{endTime,jdbcType=TIMESTAMP},
       close_time = #{closeTime,jdbcType=TIMESTAMP},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = now()
     where id = #{id,jdbcType=INTEGER}
   </update>
