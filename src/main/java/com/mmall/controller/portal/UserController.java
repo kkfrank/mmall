@@ -8,6 +8,7 @@ import com.mmall.service.UserService;
 import com.mmall.util.CookieUtil;
 import com.mmall.util.JsonUtil;
 import com.mmall.util.RedisPoolUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -45,9 +46,7 @@ public class UserController {
 
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse<String> logout(HttpSession session, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse){
-//        session.removeAttribute(Const.CURRENT_USER);
-
+    public ServerResponse<String> logout(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse){
         String loginToken = CookieUtil.readLoginToken(httpServletRequest);
         CookieUtil.delLoginToken(httpServletRequest, httpServletResponse);
         RedisPoolUtil.del(loginToken);
@@ -74,12 +73,14 @@ public class UserController {
 
     @RequestMapping(value = "/user-info", method = RequestMethod.GET)
     @ResponseBody
-    public ServerResponse<User> getUserInfo(HttpSession session, HttpServletRequest request){
-//        User user = (User)session.getAttribute(Const.CURRENT_USER);
+    public ServerResponse<User> getUserInfo(HttpServletRequest request){
         String loginToken = CookieUtil.readLoginToken(request);
-        String userStr = RedisPoolUtil.get(loginToken);
+        if(StringUtils.isEmpty(loginToken)){
+            return ServerResponse.createByErrorMsg("用户未登录");
+        }
+        String userJsonStr = RedisPoolUtil.get(loginToken);
+        User user = JsonUtil.string2Obj(userJsonStr, User.class);
 
-        User user = JsonUtil.string2Obj(userStr, User.class);
         if(user == null){
             return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(),"用户未登录");
         }
@@ -88,16 +89,25 @@ public class UserController {
 
     @RequestMapping(value = "/user-info", method = RequestMethod.PUT)
     @ResponseBody
-    public ServerResponse<User> updateUserInfo(HttpSession session, User request){
-        User currentUser = (User)session.getAttribute(Const.CURRENT_USER);
+    public ServerResponse<User> updateUserInfo(HttpServletRequest request, User user){
+        String loginToken = CookieUtil.readLoginToken(request);
+        if(StringUtils.isEmpty(loginToken)){
+            return ServerResponse.createByErrorMsg("用户未登录");
+        }
+        String userJsonStr = RedisPoolUtil.get(loginToken);
+        User currentUser = JsonUtil.string2Obj(userJsonStr, User.class);
+
         if(currentUser == null){
             return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), "用户未登录");
         }
-        request.setId(currentUser.getId());
-        request.setUsername(currentUser.getUsername());
-        ServerResponse<User> response = userService.updateUserInfo(request);
+
+        user.setId(currentUser.getId());
+        user.setUsername(currentUser.getUsername());
+        ServerResponse<User> response = userService.updateUserInfo(user);
+
         if(response.isSuccess()){
-            session.setAttribute(Const.CURRENT_USER, response.getData());
+            RedisPoolUtil.setEx(loginToken, Const.REDIS_SESSION_EXTIME, JsonUtil.obj2String(response.getData()));
+//            session.setAttribute(Const.CURRENT_USER, response.getData());
         }
         return response;
     }
@@ -120,17 +130,19 @@ public class UserController {
         return userService.forgetResetPassword(username, passwordNew, forgetToken);
     }
 
-
     @RequestMapping(value = "/reset-password", method = RequestMethod.GET)
     @ResponseBody
-    public ServerResponse<String> resetPassword(HttpSession session, String passwordOld, String passwordNew){
-        User user = (User)session.getAttribute(Const.CURRENT_USER);
+    public ServerResponse<String> resetPassword(HttpServletRequest request, String passwordOld, String passwordNew){
+        String loginToken = CookieUtil.readLoginToken(request);
+        if(StringUtils.isEmpty(loginToken)){
+            return ServerResponse.createByErrorMsg("用户未登录");
+        }
+        String userJsonStr = RedisPoolUtil.get(loginToken);
+        User user = JsonUtil.string2Obj(userJsonStr, User.class);
+
         if(user == null){
             return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), "用户未登录");
         }
         return userService.resetPassword(user, passwordOld, passwordNew);
     }
-
-
-
 }
