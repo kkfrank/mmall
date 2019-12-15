@@ -22,8 +22,8 @@ public class CookieUtil {
         // 不不设置的话，cookie不会写入硬盘，而是在内存，只在当前页面有效
         // -1 永久有效
         cookie.setMaxAge(60*60*24*365);
+        response.addCookie(cookie);
         logger.info("write cookieName:{}, cookieValue:{}", cookie.getName(), cookie.getValue());
-
     }
 
     public static String readLoginToken(HttpServletRequest request){
