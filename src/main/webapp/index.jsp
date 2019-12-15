@@ -25,5 +25,9 @@
         <input type="password" name="password" placeholder="password">
         <input type="submit" value="login">
     </form>
+
+    <form action="/users/logout" method="post">
+        <input type="submit" value="login">
+    </form>
 </body>
 </html>

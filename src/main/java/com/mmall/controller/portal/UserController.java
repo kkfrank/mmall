@@ -48,7 +48,9 @@ public class UserController {
     public ServerResponse<String> logout(HttpSession session, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse){
 //        session.removeAttribute(Const.CURRENT_USER);
 
+        String loginToken = CookieUtil.readLoginToken(httpServletRequest);
         CookieUtil.delLoginToken(httpServletRequest, httpServletResponse);
+        RedisPoolUtil.del(loginToken);
         return ServerResponse.createBySuccess();
     }
 
@@ -72,9 +74,11 @@ public class UserController {
 
     @RequestMapping(value = "/user-info", method = RequestMethod.GET)
     @ResponseBody
-    public ServerResponse<User> getUserInfo(HttpSession session){
+    public ServerResponse<User> getUserInfo(HttpSession session, HttpServletRequest request){
 //        User user = (User)session.getAttribute(Const.CURRENT_USER);
-        String userStr = RedisPoolUtil.get(session.getId());
+        String loginToken = CookieUtil.readLoginToken(request);
+        String userStr = RedisPoolUtil.get(loginToken);
+
         User user = JsonUtil.string2Obj(userStr, User.class);
         if(user == null){
             return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(),"用户未登录");
