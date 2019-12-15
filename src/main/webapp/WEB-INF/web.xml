@@ -23,6 +23,16 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
+    <!--  reset session expire filter-->
+    <filter>
+        <filter-name>sessoinExpireFilter</filter-name>
+        <filter-class>com.mmall.controller.common.SessionExpireFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>sessoinExpireFilter</filter-name>
+        <url-pattern></url-pattern>
+    </filter-mapping>
+
 
     <listener>
         <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
