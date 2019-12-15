@@ -14,6 +14,12 @@
         <input type="submit" value="富文本上传">
     </form>
 
+    <form action="/users/login" method="post">
+        <input type="text" name="username" placeholder="username">
+        <input type="password" name="password" placeholder="password">
+        <input type="submit" value="login">
+    </form>
+
     <form action="/manage/users/login" method="post">
         <input type="text" name="username" placeholder="username">
         <input type="password" name="password" placeholder="password">

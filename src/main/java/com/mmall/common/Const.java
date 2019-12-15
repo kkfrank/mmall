@@ -3,6 +3,8 @@ package com.mmall.common;
 public class Const {
     public static final String CURRENT_USER = "CURRENT_USER";
 
+    public static final int REDIS_SESSION_EXTIME = 60*30; //30 minutes
+
     public enum Role {
         USER(0,"USER1"),
         ADMIN(1,"ADMIN");
