@@ -1,9 +1,15 @@
 package com.mmall.common;
 
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class Const {
     public static final String CURRENT_USER = "CURRENT_USER";
 
     public static final int REDIS_SESSION_EXTIME = 60*30; //30 minutes
+    public static final int TOKEN_EXPIRE_TIME = 60*60*12;
     public static final String TOKEN_PREFIX = "token_";
 
     public enum Role {
@@ -22,7 +28,9 @@ public class Const {
     }
 
     public static void main(String [] arg){
-        System.out.println(Role.values());
+        Format footerFormatter = new SimpleDateFormat("dd MMMM YYYY",  Locale.ENGLISH);
+        footerFormatter.format(new Date());
+        System.out.println( footerFormatter.format(new Date()));
     }
 
 
@@ -87,7 +95,7 @@ public class Const {
 
     public enum CartLimitStatus{
         LIMIT_FAIL(0, "LIMIT_FAIL"),
-        LIMIT_SUCCESSS(1, "LIMIT_SUCCESSS");
+        LIMIT_SUCCESS(1, "LIMIT_SUCCESS");
         private int value;
         private String name;
 

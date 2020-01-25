@@ -2,7 +2,7 @@ package com.mmall.controller.common;
 
 import com.mmall.common.Const;
 import com.mmall.util.CookieUtil;
-import com.mmall.util.RedisPoolUtil;
+import com.mmall.util.RedisSharededPoolUtil;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.*;
@@ -20,9 +20,9 @@ public class SessionExpireFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         String loginToken = CookieUtil.readLoginToken((HttpServletRequest) servletRequest);
         if(!StringUtils.isEmpty(loginToken)){
-            String userJsonStr = RedisPoolUtil.get(loginToken);
+            String userJsonStr = RedisSharededPoolUtil.get(loginToken);
             if(!StringUtils.isEmpty(userJsonStr)){
-                RedisPoolUtil.expire(loginToken, Const.REDIS_SESSION_EXTIME);
+                RedisSharededPoolUtil.expire(loginToken, Const.REDIS_SESSION_EXTIME);
             }
         }
         filterChain.doFilter(servletRequest, servletResponse);

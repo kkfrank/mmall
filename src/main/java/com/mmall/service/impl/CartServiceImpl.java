@@ -123,7 +123,7 @@ public class CartServiceImpl implements CartService {
                     cartProductVo.setProductStock(product.getStock());
                     if(product.getStock() >= cart.getQuantity()){//stock is enough
                         cartProductVo.setQuantity(cart.getQuantity());
-                        cartProductVo.setLimitQuantity(Const.CartLimitStatus.LIMIT_SUCCESSS.getName());
+                        cartProductVo.setLimitQuantity(Const.CartLimitStatus.LIMIT_SUCCESS.getName());
                     }else{
                         cartProductVo.setQuantity(product.getStock());
                         cartProductVo.setLimitQuantity(Const.CartLimitStatus.LIMIT_FAIL.getName());

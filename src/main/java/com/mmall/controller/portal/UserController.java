@@ -7,7 +7,7 @@ import com.mmall.pojo.User;
 import com.mmall.service.UserService;
 import com.mmall.util.CookieUtil;
 import com.mmall.util.JsonUtil;
-import com.mmall.util.RedisPoolUtil;
+import com.mmall.util.RedisSharededPoolUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -39,7 +39,7 @@ public class UserController {
         if(response.isSuccess()){
 //            session.setAttribute(Const.CURRENT_USER,response.getData());
             CookieUtil.writeLoginToken(httpServletResponse, session.getId());
-            RedisPoolUtil.setEx(session.getId(), Const.REDIS_SESSION_EXTIME, JsonUtil.obj2String(response.getData()));
+            RedisSharededPoolUtil.setEx(session.getId(), Const.REDIS_SESSION_EXTIME, JsonUtil.obj2String(response.getData()));
         }
         return response;
     }
@@ -49,7 +49,7 @@ public class UserController {
     public ServerResponse<String> logout(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse){
         String loginToken = CookieUtil.readLoginToken(httpServletRequest);
         CookieUtil.delLoginToken(httpServletRequest, httpServletResponse);
-        RedisPoolUtil.del(loginToken);
+        RedisSharededPoolUtil.del(loginToken);
         return ServerResponse.createBySuccess();
     }
 
@@ -78,7 +78,7 @@ public class UserController {
         if(StringUtils.isEmpty(loginToken)){
             return ServerResponse.createByErrorMsg("用户未登录");
         }
-        String userJsonStr = RedisPoolUtil.get(loginToken);
+        String userJsonStr = RedisSharededPoolUtil.get(loginToken);
         User user = JsonUtil.string2Obj(userJsonStr, User.class);
 
         if(user == null){
@@ -94,7 +94,7 @@ public class UserController {
         if(StringUtils.isEmpty(loginToken)){
             return ServerResponse.createByErrorMsg("用户未登录");
         }
-        String userJsonStr = RedisPoolUtil.get(loginToken);
+        String userJsonStr = RedisSharededPoolUtil.get(loginToken);
         User currentUser = JsonUtil.string2Obj(userJsonStr, User.class);
 
         if(currentUser == null){
@@ -106,7 +106,7 @@ public class UserController {
         ServerResponse<User> response = userService.updateUserInfo(user);
 
         if(response.isSuccess()){
-            RedisPoolUtil.setEx(loginToken, Const.REDIS_SESSION_EXTIME, JsonUtil.obj2String(response.getData()));
+            RedisSharededPoolUtil.setEx(loginToken, Const.REDIS_SESSION_EXTIME, JsonUtil.obj2String(response.getData()));
 //            session.setAttribute(Const.CURRENT_USER, response.getData());
         }
         return response;
@@ -137,7 +137,7 @@ public class UserController {
         if(StringUtils.isEmpty(loginToken)){
             return ServerResponse.createByErrorMsg("用户未登录");
         }
-        String userJsonStr = RedisPoolUtil.get(loginToken);
+        String userJsonStr = RedisSharededPoolUtil.get(loginToken);
         User user = JsonUtil.string2Obj(userJsonStr, User.class);
 
         if(user == null){

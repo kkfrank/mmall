@@ -8,10 +8,7 @@ import com.mmall.pojo.User;
 import com.mmall.service.FileService;
 import com.mmall.service.ProductService;
 import com.mmall.service.UserService;
-import com.mmall.util.CookieUtil;
-import com.mmall.util.JsonUtil;
-import com.mmall.util.PropertiesUtil;
-import com.mmall.util.RedisPoolUtil;
+import com.mmall.util.*;
 import com.mmall.vo.ProductDetailVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +41,7 @@ public class ProductManageController {
         if(StringUtils.isEmpty(loginToken)){
             return ServerResponse.createByErrorMsg("用户未登录");
         }
-        String userJsonStr = RedisPoolUtil.get(loginToken);
+        String userJsonStr = RedisSharededPoolUtil.get(loginToken);
         User user = JsonUtil.string2Obj(userJsonStr, User.class);
 
         if(user == null){
@@ -63,7 +60,7 @@ public class ProductManageController {
         if(StringUtils.isEmpty(loginToken)){
             return ServerResponse.createByErrorMsg("用户未登录");
         }
-        String userJsonStr = RedisPoolUtil.get(loginToken);
+        String userJsonStr = RedisSharededPoolUtil.get(loginToken);
         User user = JsonUtil.string2Obj(userJsonStr, User.class);
 
         if(user == null){
@@ -83,7 +80,7 @@ public class ProductManageController {
         if(StringUtils.isEmpty(loginToken)){
             return ServerResponse.createByErrorMsg("用户未登录");
         }
-        String userJsonStr = RedisPoolUtil.get(loginToken);
+        String userJsonStr = RedisSharededPoolUtil.get(loginToken);
         User user = JsonUtil.string2Obj(userJsonStr, User.class);
 
         if(user == null){
@@ -102,7 +99,7 @@ public class ProductManageController {
         if(StringUtils.isEmpty(loginToken)){
             return ServerResponse.createByErrorMsg("用户未登录");
         }
-        String userJsonStr = RedisPoolUtil.get(loginToken);
+        String userJsonStr = RedisSharededPoolUtil.get(loginToken);
         User user = JsonUtil.string2Obj(userJsonStr, User.class);
 
         if(user == null){
@@ -125,7 +122,7 @@ public class ProductManageController {
         if(StringUtils.isEmpty(loginToken)){
             return ServerResponse.createByErrorMsg("用户未登录");
         }
-        String userJsonStr = RedisPoolUtil.get(loginToken);
+        String userJsonStr = RedisSharededPoolUtil.get(loginToken);
         User user = JsonUtil.string2Obj(userJsonStr, User.class);
 
         if(user == null){
@@ -144,7 +141,7 @@ public class ProductManageController {
         if(StringUtils.isEmpty(loginToken)){
             return ServerResponse.createByErrorMsg("用户未登录");
         }
-        String userJsonStr = RedisPoolUtil.get(loginToken);
+        String userJsonStr = RedisSharededPoolUtil.get(loginToken);
         User user = JsonUtil.string2Obj(userJsonStr, User.class);
 
         if(user == null){
@@ -175,7 +172,7 @@ public class ProductManageController {
             resultMap.put("msg", "请登录");
             return resultMap;
         }
-        String userJsonStr = RedisPoolUtil.get(loginToken);
+        String userJsonStr = RedisSharededPoolUtil.get(loginToken);
         User user = JsonUtil.string2Obj(userJsonStr, User.class);
         if(user == null){
             resultMap.put("success",false);
