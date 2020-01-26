@@ -34,4 +34,6 @@ public interface OrderService {
 
     ServerResponse manageSendGoods(Long orderNo);
 
+    //hour个小时内未付款订单，关闭
+    void closeOrder(int hour);
 }

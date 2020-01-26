@@ -55,6 +55,13 @@
       </if>
   </select>
 
+  <select id="selectStockByProductId" resultType="integer" parameterType="integer">
+    SELECT stock
+    from mmall_product
+    where id = #{id}
+    for update
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from mmall_product
     where id = #{id,jdbcType=INTEGER}

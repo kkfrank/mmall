@@ -27,6 +27,7 @@ import com.mmall.vo.OrderVo;
 import com.mmall.vo.ShippingVo;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -419,6 +420,30 @@ public class OrderServiceImpl implements OrderService {
             return ServerResponse.createBySuccess();
         }
         return ServerResponse.createByError();
+    }
+
+    @Override
+    public void closeOrder(int hour) {
+        Date closeDateTime = DateUtils.addHours(new Date(), -hour);
+        List<Order> orderList = orderMapper.selectByStatusAndBeforeCreateTime(Const.OrderStatus.UN_PAY.getCode(), DateTimeUtil.dateToStr(closeDateTime));
+
+        //恢复product的库存
+        //关闭订单
+        for (Order order: orderList){
+            List<OrderItem> orderItemList = orderItemMapper.selectByOrderNo(order.getOrderNo());
+            for (OrderItem orderItem: orderItemList){
+                //使用主键where条件，防止锁表。同时必须是支持MySQL的InnoDB
+                Integer stock = productMapper.selectStockByProductId(orderItem.getProductId());
+                if(stock != null){//考虑已生成的订单商品，被删除的情况
+                    Product product = new Product();
+                    product.setId(orderItem.getProductId());
+                    product.setStock(stock + orderItem.getQuantity());
+                    productMapper.updateByPrimaryKeySelective(product);
+                }
+            }
+            orderMapper.closeOrderById(order.getId());
+            logger.info("close order, orderId:{}", order.getId());
+        }
     }
 
     // 简单打印应答

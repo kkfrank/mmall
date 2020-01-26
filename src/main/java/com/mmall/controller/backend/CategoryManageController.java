@@ -32,19 +32,19 @@ public class CategoryManageController {
     @ResponseBody
     public ServerResponse<Category> addCategory(HttpServletRequest request,
                        String categoryName, @RequestParam(value = "parentId", defaultValue = "0") int parentId){
-        String loginToken = CookieUtil.readLoginToken(request);
-        if(StringUtils.isEmpty(loginToken)){
-            return ServerResponse.createByErrorMsg("用户未登录");
-        }
-        String userJsonStr = RedisSharededPoolUtil.get(loginToken);
-        User user = JsonUtil.string2Obj(userJsonStr, User.class);
-
-        if(user == null){
-            return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(),"用户未登录");
-        }
-        if(!userService.checkAdminRole(user).isSuccess()){
-            return ServerResponse.createByErrorMsg("用户没有权限");
-        }
+//        String loginToken = CookieUtil.readLoginToken(request);
+//        if(StringUtils.isEmpty(loginToken)){
+//            return ServerResponse.createByErrorMsg("用户未登录");
+//        }
+//        String userJsonStr = RedisSharededPoolUtil.get(loginToken);
+//        User user = JsonUtil.string2Obj(userJsonStr, User.class);
+//
+//        if(user == null){
+//            return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(),"用户未登录");
+//        }
+//        if(!userService.checkAdminRole(user).isSuccess()){
+//            return ServerResponse.createByErrorMsg("用户没有权限");
+//        }
 
         return categoryService.addCategory(categoryName, parentId);
     }
@@ -53,19 +53,19 @@ public class CategoryManageController {
     @ResponseBody
     public ServerResponse updateCategoryName(HttpServletRequest request, @PathVariable("categoryId") Integer id,
                                              @RequestParam(value = "name") String categoryName){
-        String loginToken = CookieUtil.readLoginToken(request);
-        if(StringUtils.isEmpty(loginToken)){
-            return ServerResponse.createByErrorMsg("用户未登录");
-        }
-        String userJsonStr = RedisSharededPoolUtil.get(loginToken);
-        User user = JsonUtil.string2Obj(userJsonStr, User.class);
-
-        if(user == null){
-            return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(),"用户未登录");
-        }
-        if(!userService.checkAdminRole(user).isSuccess()){
-            return ServerResponse.createByErrorMsg("用户没有权限");
-        }
+//        String loginToken = CookieUtil.readLoginToken(request);
+//        if(StringUtils.isEmpty(loginToken)){
+//            return ServerResponse.createByErrorMsg("用户未登录");
+//        }
+//        String userJsonStr = RedisSharededPoolUtil.get(loginToken);
+//        User user = JsonUtil.string2Obj(userJsonStr, User.class);
+//
+//        if(user == null){
+//            return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(),"用户未登录");
+//        }
+//        if(!userService.checkAdminRole(user).isSuccess()){
+//            return ServerResponse.createByErrorMsg("用户没有权限");
+//        }
 
         return categoryService.updateCategoryName(id, categoryName);
     }
@@ -81,19 +81,20 @@ public class CategoryManageController {
     public ServerResponse getChildrenCategory(HttpServletRequest request,
                               @RequestParam(value = "categoryId", defaultValue = "0") Integer categoryId,
                               @RequestParam(value = "deep", defaultValue = "false") boolean deep){
-        String loginToken = CookieUtil.readLoginToken(request);
-        if(StringUtils.isEmpty(loginToken)){
-            return ServerResponse.createByErrorMsg("用户未登录");
-        }
-        String userJsonStr = RedisSharededPoolUtil.get(loginToken);
-        User user = JsonUtil.string2Obj(userJsonStr, User.class);
+//        String loginToken = CookieUtil.readLoginToken(request);
+//        if(StringUtils.isEmpty(loginToken)){
+//            return ServerResponse.createByErrorMsg("用户未登录");
+//        }
+//        String userJsonStr = RedisSharededPoolUtil.get(loginToken);
+//        User user = JsonUtil.string2Obj(userJsonStr, User.class);
+//
+//        if(user == null){
+//            return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(),"用户未登录");
+//        }
+//        if(!userService.checkAdminRole(user).isSuccess()){
+//            return ServerResponse.createByErrorMsg("用户没有权限");
+//        }
 
-        if(user == null){
-            return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(),"用户未登录");
-        }
-        if(!userService.checkAdminRole(user).isSuccess()){
-            return ServerResponse.createByErrorMsg("用户没有权限");
-        }
         if(Boolean.TRUE.equals(deep)){
             return categoryService.getChildrenCategoryDeep(categoryId);
         }else{
